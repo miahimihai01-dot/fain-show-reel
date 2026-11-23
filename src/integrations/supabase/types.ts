@@ -65,6 +65,32 @@ export type Database = {
         }
         Relationships: []
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          target_username: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          target_username: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          target_username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follows_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           body: string
@@ -106,24 +132,120 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          bio: string
           created_at: string
           display_name: string
           id: string
           username: string
         }
         Insert: {
+          avatar_url?: string | null
+          bio?: string
           created_at?: string
           display_name: string
           id: string
           username: string
         }
         Update: {
+          avatar_url?: string | null
+          bio?: string
           created_at?: string
           display_name?: string
           id?: string
           username?: string
         }
         Relationships: []
+      }
+      video_likes: {
+        Row: {
+          created_at: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_saves: {
+        Row: {
+          created_at: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_saves_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      videos: {
+        Row: {
+          created_at: string
+          description: string
+          duration_sec: number
+          id: string
+          poster_path: string | null
+          storage_path: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          duration_sec: number
+          id?: string
+          poster_path?: string | null
+          storage_path: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          duration_sec?: number
+          id?: string
+          poster_path?: string | null
+          storage_path?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "videos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -144,7 +266,22 @@ export type Database = {
           unread_count: number
         }[]
       }
+      profile_stats: {
+        Args: { _user: string }
+        Returns: {
+          followers: number
+          following: number
+          likes: number
+        }[]
+      }
       start_conversation: { Args: { _other_user: string }; Returns: string }
+      video_like_counts: {
+        Args: { _ids: string[] }
+        Returns: {
+          likes: number
+          video_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
