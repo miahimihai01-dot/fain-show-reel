@@ -1,14 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { MAX_SHORT_SECONDS, clips, formatCount, isShortDurationAllowed, products } from "./content";
+import { MAX_SHORT_SECONDS, clips, formatCount, isShortDurationAllowed } from "./content";
 
 describe("FainShow content", () => {
   it("has exactly 3 sample videos", () => {
     expect(clips).toHaveLength(3);
-  });
-
-  it("has exactly 4 shop products", () => {
-    expect(products).toHaveLength(4);
   });
 
   it("formats counts the Romanian way", () => {

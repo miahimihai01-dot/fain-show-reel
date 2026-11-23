@@ -38,6 +38,10 @@
   --color-ring: var(--ring);
   --color-overlay: var(--overlay);
   --color-nav: var(--nav);
+  --color-google-bg: var(--google-bg);
+  --color-google-border: var(--google-border);
+  --color-google-fg: var(--google-fg);
+  --color-bubble-mine: var(--bubble-mine);
   --color-ring-offset-background: var(--background);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -79,6 +83,11 @@
   --ring: oklch(0.58 0.23 27);
   --overlay: oklch(0 0 0);
   --nav: oklch(0.05 0 0 / 94%);
+  /* Google's dark sign-in button theme (brand rule, not app colors). */
+  --google-bg: #131314;
+  --google-border: #8e918f;
+  --google-fg: #e3e3e3;
+  --bubble-mine: oklch(0.42 0.17 27);
   --chart-1: oklch(0.58 0.23 27);
   --chart-2: oklch(0.68 0.22 30);
   --chart-3: oklch(0.45 0.15 25);
@@ -173,4 +182,8 @@
 
 @utility animate-heart-pop {
   animation: heart-pop 0.3s ease-out;
+}
+
+@utility h-chat {
+  height: calc(100dvh - 4rem - env(safe-area-inset-bottom));
 }

@@ -17,7 +17,7 @@ describe("App routing", () => {
 });
 
 describe("FainShow menu pages", () => {
-  it.each(["/cautare", "/creeaza", "/magazin", "/profil", "/animeuri", "/desene"])("matches a page for %s", (path) => {
+  it.each(["/cautare", "/creeaza", "/mesaje", "/profil", "/animeuri", "/desene"])("matches a page for %s", (path) => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
     expect(router.matchRoutes(path).at(-1)?.routeId).toBe(path);
   });

@@ -31,7 +31,10 @@ use the editor.
 
 ## Project rules
 
-- App content (clips, movies, anime, cartoons, manga, products) lives in `src/lib/content.ts` as static data, including the short-video length rule; there is no backend yet, so pages import it directly.
+- App content (clips, movies, anime, cartoons, manga) lives in `src/lib/content.ts` as static data, including the short-video length rule; pages import it directly.
+- Messaging is the only backend feature: Lovable Cloud tables (profiles, conversations, conversation_participants, messages) guarded by RLS via `is_participant`; one-to-one chats are created only through the `start_conversation` RPC so duplicates can't happen.
+- Live chat updates use a private per-user broadcast topic `user:<id>` rung by a trigger on new messages (not postgres_changes), so each client keeps one channel; the client just refetches the affected queries.
+- Chat data helpers and query keys live in `src/lib/chat.ts`; the Mesaje page reads data in the browser because it needs the signed-in session.
 - Top-menu sections share `SectionLayout` + `TopTabs`; list rows use `PosterRow` with lazy images so long lists stay light.
 - The home feed (`src/components/VideoFeed.tsx`) owns playback: one active slide chosen by IntersectionObserver, every other `<video>` stays `preload="none"` and paused, so phones never decode more than one video.
 - Sample videos are self-hosted in `public/videos/` and images are small WebP files in `src/assets/`, to keep the app light.

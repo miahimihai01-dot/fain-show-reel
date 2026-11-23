@@ -1,11 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Plus, Search, ShoppingBag, User } from "lucide-react";
+import { Home, MessageCircle, Plus, Search, User } from "lucide-react";
 
 const items = [
   { to: "/", label: "Acasă", icon: Home },
   { to: "/cautare", label: "Căutare", icon: Search },
   { to: "/creeaza", label: "Creează", icon: Plus },
-  { to: "/magazin", label: "Magazin", icon: ShoppingBag },
+  { to: "/mesaje", label: "Mesaje", icon: MessageCircle },
   { to: "/profil", label: "Profil", icon: User },
 ] as const;
 
@@ -26,7 +26,7 @@ export function BottomNav() {
           <li key={to}>
             <Link
               to={to}
-              activeOptions={{ exact: true }}
+              activeOptions={{ exact: true, includeSearch: false }}
               className={`flex h-16 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold ${
                 to === "/" && onHomeSection ? "text-foreground" : "text-muted-foreground"
               }`}

@@ -20,10 +20,6 @@ import mangaPage1 from "@/assets/manga-page-1.webp";
 import mangaPage2 from "@/assets/manga-page-2.webp";
 import mangaPage3 from "@/assets/manga-page-3.webp";
 import mangaPage4 from "@/assets/manga-page-4.webp";
-import product1 from "@/assets/product-1.webp";
-import product2 from "@/assets/product-2.webp";
-import product3 from "@/assets/product-3.webp";
-import product4 from "@/assets/product-4.webp";
 import short1 from "@/assets/short-1.webp";
 import short2 from "@/assets/short-2.webp";
 import short3 from "@/assets/short-3.webp";
@@ -97,14 +93,6 @@ export type Clip = {
   durationSec: number;
   src: string;
   poster: string;
-};
-
-export type Product = {
-  id: string;
-  name: string;
-  description: string;
-  priceLei: number;
-  image: string;
 };
 
 export const clips: Clip[] = [
@@ -208,20 +196,9 @@ export function formatRating(r: number): string {
   return r.toFixed(1).replace(".", ",");
 }
 
-export const products: Product[] = [
-  { id: "tricou", name: "Tricou FainShow", description: "Bumbac 100%, negru cu logo roșu", priceLei: 89, image: product1 },
-  { id: "sapca", name: "Șapcă Cinema", description: "Neagră, cusături roșii", priceLei: 69, image: product2 },
-  { id: "popcorn", name: "Popcorn XL", description: "Găleată mare pentru seara de film", priceLei: 25, image: product3 },
-  { id: "hanorac", name: "Hanorac Noapte", description: "Călduros, cu șnururi roșii", priceLei: 179, image: product4 },
-];
-
 /** 12400 -> "12,4K", 950 -> "950" (Romanian decimal comma). */
 export function formatCount(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(".", ",").replace(",0", "")}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(".", ",").replace(",0", "")}K`;
   return String(n);
-}
-
-export function formatLei(value: number): string {
-  return `${value} lei`;
 }

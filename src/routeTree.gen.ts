@@ -14,7 +14,7 @@ import { Route as AnimeuriRouteImport } from './routes/animeuri'
 import { Route as CautareRouteImport } from './routes/cautare'
 import { Route as CreeazaRouteImport } from './routes/creeaza'
 import { Route as DeseneRouteImport } from './routes/desene'
-import { Route as MagazinRouteImport } from './routes/magazin'
+import { Route as MesajeRouteImport } from './routes/mesaje'
 import { Route as ProfilRouteImport } from './routes/profil'
 import { Route as FilmeIndexRouteImport } from './routes/filme.index'
 import { Route as FilmeIdRouteImport } from './routes/filme.$id'
@@ -46,9 +46,9 @@ const DeseneRoute = DeseneRouteImport.update({
   path: '/desene',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MagazinRoute = MagazinRouteImport.update({
-  id: '/magazin',
-  path: '/magazin',
+const MesajeRoute = MesajeRouteImport.update({
+  id: '/mesaje',
+  path: '/mesaje',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfilRoute = ProfilRouteImport.update({
@@ -83,7 +83,7 @@ export interface FileRoutesByFullPath {
   '/cautare': typeof CautareRoute
   '/creeaza': typeof CreeazaRoute
   '/desene': typeof DeseneRoute
-  '/magazin': typeof MagazinRoute
+  '/mesaje': typeof MesajeRoute
   '/profil': typeof ProfilRoute
   '/filme/$id': typeof FilmeIdRoute
   '/manga/$id': typeof MangaIdRoute
@@ -96,7 +96,7 @@ export interface FileRoutesByTo {
   '/cautare': typeof CautareRoute
   '/creeaza': typeof CreeazaRoute
   '/desene': typeof DeseneRoute
-  '/magazin': typeof MagazinRoute
+  '/mesaje': typeof MesajeRoute
   '/profil': typeof ProfilRoute
   '/filme/$id': typeof FilmeIdRoute
   '/manga/$id': typeof MangaIdRoute
@@ -110,7 +110,7 @@ export interface FileRoutesById {
   '/cautare': typeof CautareRoute
   '/creeaza': typeof CreeazaRoute
   '/desene': typeof DeseneRoute
-  '/magazin': typeof MagazinRoute
+  '/mesaje': typeof MesajeRoute
   '/profil': typeof ProfilRoute
   '/filme/$id': typeof FilmeIdRoute
   '/manga/$id': typeof MangaIdRoute
@@ -125,7 +125,7 @@ export interface FileRouteTypes {
     | '/cautare'
     | '/creeaza'
     | '/desene'
-    | '/magazin'
+    | '/mesaje'
     | '/profil'
     | '/filme/$id'
     | '/manga/$id'
@@ -138,7 +138,7 @@ export interface FileRouteTypes {
     | '/cautare'
     | '/creeaza'
     | '/desene'
-    | '/magazin'
+    | '/mesaje'
     | '/profil'
     | '/filme/$id'
     | '/manga/$id'
@@ -151,7 +151,7 @@ export interface FileRouteTypes {
     | '/cautare'
     | '/creeaza'
     | '/desene'
-    | '/magazin'
+    | '/mesaje'
     | '/profil'
     | '/filme/$id'
     | '/manga/$id'
@@ -165,7 +165,7 @@ export interface RootRouteChildren {
   CautareRoute: typeof CautareRoute
   CreeazaRoute: typeof CreeazaRoute
   DeseneRoute: typeof DeseneRoute
-  MagazinRoute: typeof MagazinRoute
+  MesajeRoute: typeof MesajeRoute
   ProfilRoute: typeof ProfilRoute
   FilmeIdRoute: typeof FilmeIdRoute
   MangaIdRoute: typeof MangaIdRoute
@@ -210,11 +210,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DeseneRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/magazin': {
-      id: '/magazin'
-      path: '/magazin'
-      fullPath: '/magazin'
-      preLoaderRoute: typeof MagazinRouteImport
+    '/mesaje': {
+      id: '/mesaje'
+      path: '/mesaje'
+      fullPath: '/mesaje'
+      preLoaderRoute: typeof MesajeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profil': {
@@ -261,7 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   CautareRoute: CautareRoute,
   CreeazaRoute: CreeazaRoute,
   DeseneRoute: DeseneRoute,
-  MagazinRoute: MagazinRoute,
+  MesajeRoute: MesajeRoute,
   ProfilRoute: ProfilRoute,
   FilmeIdRoute: FilmeIdRoute,
   MangaIdRoute: MangaIdRoute,

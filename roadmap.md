@@ -16,3 +16,9 @@
 - [x] Manga: copertă, titlu, capitole, buton Citește
 - [x] Căutare include toate secțiunile
 - [ ] Înlocuiește exemplele cu conținutul propriu — începem cu Scurte (așteaptă videoclipurile, numele, descrierea, melodia de la utilizator)
+
+## Mesaje (înlocuiește Magazinul)
+- [ ] Scoate complet Magazinul (pagină, produse, imagini, meniu)
+- [ ] Conturi (înregistrare / autentificare) ca să poată vorbi utilizatorii între ei
+- [ ] Mesaje: listă conversații stânga, chat deschis dreapta (ca WhatsApp), în timp real
+- [ ] Același design negru cu roșu
