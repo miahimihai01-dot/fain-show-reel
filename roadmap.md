@@ -2,8 +2,7 @@
 
 - [x] Ecran principal tip TikTok: 3 videoclipuri verticale, swipe sus/jos; pornește automat doar cel vizibil, celelalte oprite
 - [x] Butoane dreapta: Îmi place, Comentarii, Distribuie, Urmărește; jos: utilizator, descriere, melodie
-- [x] Meniu jos: Acasă, Căutare, + Crează, Magazin, Profil
-- [x] Magazin cu 4 produse
+- [x] Meniu jos: Acasă, Căutare, + Crează, Mesaje, Profil
 - [x] Căutare (cu cele 6 filme), Crează, Profil
 - [x] Temă întunecată neagră cu roșu, totul în română, ușoară pe telefon
 
@@ -18,7 +17,7 @@
 - [ ] Înlocuiește exemplele cu conținutul propriu — începem cu Scurte (așteaptă videoclipurile, numele, descrierea, melodia de la utilizator)
 
 ## Mesaje (înlocuiește Magazinul)
-- [ ] Scoate complet Magazinul (pagină, produse, imagini, meniu)
-- [ ] Conturi (înregistrare / autentificare) ca să poată vorbi utilizatorii între ei
-- [ ] Mesaje: listă conversații stânga, chat deschis dreapta (ca WhatsApp), în timp real
-- [ ] Același design negru cu roșu
+- [x] Scoate complet Magazinul (pagină, produse, imagini, meniu)
+- [x] Conturi (înregistrare / autentificare) ca să poată vorbi utilizatorii între ei
+- [x] Mesaje: listă conversații stânga, chat deschis dreapta (ca WhatsApp), în timp real
+- [x] Același design negru cu roșu

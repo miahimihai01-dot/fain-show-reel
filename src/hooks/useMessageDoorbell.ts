@@ -28,8 +28,10 @@ export function useMessageDoorbell(userId: string | undefined) {
         })
         .subscribe((status) => {
           if (status !== "SUBSCRIBED") return;
-          // After a reconnect, catch up on anything we missed.
-          if (subscribedBefore) queryClient.invalidateQueries({ queryKey: ["chat"] });
+          // Rings sent before we joined (first join) or while disconnected (reconnect)
+          // are not replayed, so refetch whatever chat data is already on screen.
+          const hasChatData = queryClient.getQueryCache().findAll({ queryKey: ["chat"] }).some((q) => q.state.dataUpdatedAt > 0);
+          if (subscribedBefore || hasChatData) queryClient.invalidateQueries({ queryKey: ["chat"] });
           subscribedBefore = true;
         });
     });
