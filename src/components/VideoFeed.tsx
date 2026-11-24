@@ -1,21 +1,43 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Check, Heart, MessageCircle, Music2, Play, Plus, Send, Share2, Volume2, VolumeX, X } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Bookmark, Check, Heart, MessageCircle, Music2, Play, Plus, Send, Share2, Volume2, VolumeX, X } from "lucide-react";
 
+import { ShareSheet } from "@/components/ShareSheet";
 import { TopTabs } from "@/components/TopTabs";
-import { clips as initialClips, formatCount, type Clip } from "@/lib/content";
+import { useAuth } from "@/hooks/useAuth";
+import { useLibrary } from "@/hooks/useLibrary";
+import { clips as sampleClips, formatCount, type Comment } from "@/lib/content";
+import { feedQuery, likeCountsQuery, videoUrl, type FeedClip } from "@/lib/library";
+
+type Clip = FeedClip;
 
 /**
  * Vertical swipe feed. Only the slide that is on screen plays (autoplay); every other
  * video stays paused and unloaded, so at most one video runs at a time.
+ * `startId` (from /video/<id>) scrolls straight to that video and plays it.
  */
-export function VideoFeed() {
-  const [clips, setClips] = useState<Clip[]>(initialClips);
-  const [activeId, setActiveId] = useState<string>(initialClips[0]?.id ?? "");
+export function VideoFeed({ startId }: { startId?: string }) {
+  const feed = useQuery({ ...feedQuery(), placeholderData: sampleClips });
+  const baseClips = feed.data ?? sampleClips;
+  const [extraComments, setExtraComments] = useState<Record<string, Comment[]>>({});
+  const clips = useMemo(
+    () => baseClips.map((c) => (extraComments[c.id] ? { ...c, comments: [...c.comments, ...extraComments[c.id]!] } : c)),
+    [baseClips, extraComments],
+  );
+  const ids = useMemo(() => clips.map((c) => c.id), [clips]);
+  const counts = useQuery(likeCountsQuery(ids));
+  const { user } = useAuth();
+  const lib = useLibrary(user?.id);
+
+  const [activeId, setActiveId] = useState<string>(startId ?? sampleClips[0]?.id ?? "");
   const [paused, setPaused] = useState(false);
   const [muted, setMuted] = useState(false);
   const [commentsFor, setCommentsFor] = useState<string | null>(null);
+  const [shareFor, setShareFor] = useState<Clip | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const jumpedRef = useRef(false);
+  const idsKey = ids.join(",");
 
   // The slide that is mostly on screen becomes the active (playing) one.
   useEffect(() => {
@@ -37,11 +59,25 @@ export function VideoFeed() {
     );
     root.querySelectorAll("[data-clip-id]").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [idsKey]);
+
+  // Opened from a video link: jump to that video once it is in the list.
+  useEffect(() => {
+    if (!startId || jumpedRef.current) return;
+    const el = scrollerRef.current?.querySelector(`[data-clip-id="${CSS.escape(startId)}"]`);
+    if (el) {
+      el.scrollIntoView({ block: "start" });
+      setActiveId(startId);
+      jumpedRef.current = true;
+    } else if (!feed.isPlaceholderData && !feed.isFetching) {
+      jumpedRef.current = true;
+      setNotice("Videoclipul nu mai există.");
+    }
+  }, [startId, idsKey, feed.isPlaceholderData, feed.isFetching]);
 
   useEffect(() => {
     if (!notice) return;
-    const t = setTimeout(() => setNotice(null), 1800);
+    const t = setTimeout(() => setNotice(null), 2200);
     return () => clearTimeout(t);
   }, [notice]);
 
@@ -49,24 +85,10 @@ export function VideoFeed() {
   // Browsers block autoplay with sound until the user taps; fall back to muted.
   const onAutoplayBlocked = useCallback(() => setMuted(true), []);
 
-  const share = useCallback(async (clip: Clip) => {
-    const url = `${window.location.origin}/?v=${clip.id}`;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "FainShow", text: clip.description, url });
-        return;
-      }
-      await navigator.clipboard.writeText(url);
-      setNotice("Link copiat!");
-    } catch {
-      /* user closed the share sheet */
-    }
-  }, []);
+  const needAccount = useCallback(() => setNotice("Intră în cont din Profil ca să folosești asta."), []);
 
   const addComment = useCallback((id: string, text: string) => {
-    setClips((list) =>
-      list.map((c) => (c.id === id ? { ...c, comments: [...c.comments, { user: "tu", text }] } : c)),
-    );
+    setExtraComments((m) => ({ ...m, [id]: [...(m[id] ?? []), { user: "tu", text }] }));
   }, []);
 
   const openClip = clips.find((c) => c.id === commentsFor) ?? null;
@@ -82,6 +104,18 @@ export function VideoFeed() {
           <VideoSlide
             key={clip.id}
             clip={clip}
+            likeCount={clip.likes + (counts.data?.[clip.id] ?? 0)}
+            liked={lib.liked.has(clip.id)}
+            saved={lib.saved.has(clip.id)}
+            following={lib.followed.has(clip.username)}
+            onLike={() => (user ? lib.toggleLike(clip.id) : needAccount())}
+            onSave={() => {
+              if (!user) return needAccount();
+              const willSave = !lib.saved.has(clip.id);
+              lib.toggleSave(clip.id);
+              setNotice(willSave ? "Salvat în Favorite" : "Scos din Favorite");
+            }}
+            onFollow={() => (user ? lib.toggleFollow(clip.username) : needAccount())}
             active={activeId === clip.id}
             playing={activeId === clip.id && !paused}
             muted={muted}
@@ -89,7 +123,7 @@ export function VideoFeed() {
             onAutoplayBlocked={onAutoplayBlocked}
             onTogglePlay={togglePlay}
             onOpenComments={setCommentsFor}
-            onShare={share}
+            onShare={setShareFor}
           />
         ))}
       </div>
@@ -97,10 +131,21 @@ export function VideoFeed() {
       {notice && (
         <div
           role="status"
-          className="absolute left-1/2 top-16 z-30 -translate-x-1/2 rounded-full bg-card px-4 py-2 text-sm font-semibold"
+          className="absolute left-1/2 top-16 z-[70] -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
         >
           {notice}
         </div>
+      )}
+
+      {shareFor && (
+        <ShareSheet
+          title="Distribuie videoclipul"
+          url={videoUrl(window.location.origin, shareFor.id)}
+          text={shareFor.description || `Videoclip de la @${shareFor.username} pe FainShow`}
+          withMore
+          onClose={() => setShareFor(null)}
+          onNotice={setNotice}
+        />
       )}
 
       {openClip && (
@@ -116,6 +161,13 @@ export function VideoFeed() {
 
 type SlideProps = {
   clip: Clip;
+  likeCount: number;
+  liked: boolean;
+  saved: boolean;
+  following: boolean;
+  onLike: () => void;
+  onSave: () => void;
+  onFollow: () => void;
   active: boolean;
   playing: boolean;
   muted: boolean;
@@ -128,6 +180,13 @@ type SlideProps = {
 
 function VideoSlide({
   clip,
+  likeCount,
+  liked,
+  saved,
+  following,
+  onLike,
+  onSave,
+  onFollow,
   active,
   playing,
   muted,
@@ -138,8 +197,6 @@ function VideoSlide({
   onShare,
 }: SlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [liked, setLiked] = useState(false);
-  const [following, setFollowing] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -208,7 +265,7 @@ function VideoSlide({
       <div className="absolute bottom-6 right-2 z-10 flex flex-col items-center gap-5">
         <ActionButton
           label={following ? "Urmărești" : "Urmărește"}
-          onClick={() => setFollowing((f) => !f)}
+          onClick={onFollow}
           pressed={following}
         >
           <span className="relative flex size-12 items-center justify-center rounded-full border-2 border-foreground bg-gradient-brand font-display text-xl text-primary-foreground">
@@ -220,9 +277,9 @@ function VideoSlide({
         </ActionButton>
 
         <ActionButton
-          label={formatCount(clip.likes + (liked ? 1 : 0))}
+          label={formatCount(likeCount)}
           ariaLabel={liked ? "Nu-mi mai place" : "Îmi place"}
-          onClick={() => setLiked((l) => !l)}
+          onClick={onLike}
           pressed={liked}
         >
           <Heart
@@ -239,7 +296,11 @@ function VideoSlide({
           <MessageCircle className="size-9 fill-foreground text-foreground" />
         </ActionButton>
 
-        <ActionButton label={formatCount(clip.shares)} ariaLabel="Distribuie" onClick={() => onShare(clip)}>
+        <ActionButton label={saved ? "Salvat" : "Salvează"} ariaLabel={saved ? "Scoate din Favorite" : "Salvează"} onClick={onSave} pressed={saved}>
+          <Bookmark className={`size-8 ${saved ? "fill-primary text-primary" : "fill-foreground text-foreground"}`} />
+        </ActionButton>
+
+        <ActionButton label={clip.shares ? formatCount(clip.shares) : "Distribuie"} ariaLabel="Distribuie" onClick={() => onShare(clip)}>
           <Share2 className="size-8 text-foreground" strokeWidth={2.5} />
         </ActionButton>
       </div>
