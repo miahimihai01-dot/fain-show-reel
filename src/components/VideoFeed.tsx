@@ -85,6 +85,13 @@ export function VideoFeed({ startId }: { startId?: string }) {
   // Browsers block autoplay with sound until the user taps; fall back to muted.
   const onAutoplayBlocked = useCallback(() => setMuted(true), []);
 
+  // When a video finishes, scroll to the next one (it then starts by itself).
+  const goNext = useCallback((id: string) => {
+    const root = scrollerRef.current;
+    const el = root?.querySelector(`[data-clip-id="${CSS.escape(id)}"]`)?.nextElementSibling as HTMLElement | null;
+    if (root && el) root.scrollTo({ top: el.offsetTop, behavior: "smooth" });
+  }, []);
+
   const needAccount = useCallback(() => setNotice("Intră în cont din Profil ca să folosești asta."), []);
 
   const addComment = useCallback((id: string, text: string) => {
@@ -124,6 +131,7 @@ export function VideoFeed({ startId }: { startId?: string }) {
             onTogglePlay={togglePlay}
             onOpenComments={setCommentsFor}
             onShare={setShareFor}
+            onEnded={() => goNext(clip.id)}
           />
         ))}
       </div>
@@ -176,6 +184,7 @@ type SlideProps = {
   onTogglePlay: () => void;
   onOpenComments: (id: string) => void;
   onShare: (clip: Clip) => void;
+  onEnded: () => void;
 };
 
 function VideoSlide({
@@ -195,6 +204,7 @@ function VideoSlide({
   onTogglePlay,
   onOpenComments,
   onShare,
+  onEnded,
 }: SlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -232,8 +242,8 @@ function VideoSlide({
         poster={clip.poster}
         preload={active ? "auto" : "none"}
         playsInline
-        loop
         muted={muted}
+        onEnded={onEnded}
         onClick={onTogglePlay}
         className="h-full w-full cursor-pointer object-cover"
       />

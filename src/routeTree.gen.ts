@@ -20,6 +20,7 @@ import { Route as FilmeIndexRouteImport } from './routes/filme.index'
 import { Route as FilmeIdRouteImport } from './routes/filme.$id'
 import { Route as MangaIndexRouteImport } from './routes/manga.index'
 import { Route as MangaIdRouteImport } from './routes/manga.$id'
+import { Route as VideoIdRouteImport } from './routes/video.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,6 +77,11 @@ const MangaIdRoute = MangaIdRouteImport.update({
   path: '/manga/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VideoIdRoute = VideoIdRouteImport.update({
+  id: '/video/$id',
+  path: '/video/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/profil': typeof ProfilRoute
   '/filme/$id': typeof FilmeIdRoute
   '/manga/$id': typeof MangaIdRoute
+  '/video/$id': typeof VideoIdRoute
   '/filme/': typeof FilmeIndexRoute
   '/manga/': typeof MangaIndexRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/profil': typeof ProfilRoute
   '/filme/$id': typeof FilmeIdRoute
   '/manga/$id': typeof MangaIdRoute
+  '/video/$id': typeof VideoIdRoute
   '/filme': typeof FilmeIndexRoute
   '/manga': typeof MangaIndexRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/profil': typeof ProfilRoute
   '/filme/$id': typeof FilmeIdRoute
   '/manga/$id': typeof MangaIdRoute
+  '/video/$id': typeof VideoIdRoute
   '/filme/': typeof FilmeIndexRoute
   '/manga/': typeof MangaIndexRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/profil'
     | '/filme/$id'
     | '/manga/$id'
+    | '/video/$id'
     | '/filme/'
     | '/manga/'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/profil'
     | '/filme/$id'
     | '/manga/$id'
+    | '/video/$id'
     | '/filme'
     | '/manga'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/profil'
     | '/filme/$id'
     | '/manga/$id'
+    | '/video/$id'
     | '/filme/'
     | '/manga/'
   fileRoutesById: FileRoutesById
@@ -169,6 +181,7 @@ export interface RootRouteChildren {
   ProfilRoute: typeof ProfilRoute
   FilmeIdRoute: typeof FilmeIdRoute
   MangaIdRoute: typeof MangaIdRoute
+  VideoIdRoute: typeof VideoIdRoute
   FilmeIndexRoute: typeof FilmeIndexRoute
   MangaIndexRoute: typeof MangaIndexRoute
 }
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MangaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/video/$id': {
+      id: '/video/$id'
+      path: '/video/$id'
+      fullPath: '/video/$id'
+      preLoaderRoute: typeof VideoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -265,6 +285,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfilRoute: ProfilRoute,
   FilmeIdRoute: FilmeIdRoute,
   MangaIdRoute: MangaIdRoute,
+  VideoIdRoute: VideoIdRoute,
   FilmeIndexRoute: FilmeIndexRoute,
   MangaIndexRoute: MangaIndexRoute,
 }

@@ -20,7 +20,7 @@ function GoogleLogo() {
   );
 }
 
-export function AuthPanel() {
+export function AuthPanel({ next = "/mesaje" }: { next?: string } = {}) {
   const [mode, setMode] = useState<Mode>("signin");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -29,7 +29,7 @@ export function AuthPanel() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
-  const redirect = () => `${window.location.origin}/mesaje`;
+  const redirect = () => `${window.location.origin}${next}`;
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();

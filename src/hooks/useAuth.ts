@@ -2,6 +2,7 @@ import type { Session } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { rememberSession } from "@/lib/accounts";
 
 /** Browser session; `loading` stays true until the stored session has been read. */
 export function useAuth() {
@@ -11,6 +12,7 @@ export function useAuth() {
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
+      rememberSession(s);
       setLoading(false);
     });
     supabase.auth.getSession().then(({ data: { session: s } }) => {
